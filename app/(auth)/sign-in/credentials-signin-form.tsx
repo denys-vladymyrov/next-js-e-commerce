@@ -5,12 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signInDefaultValues } from '@/lib/constants';
 import Link from 'next/link';
-import { useActionState } from 'react';
+import {useActionState, useEffect} from 'react';
 import { useFormStatus } from 'react-dom';
 import { signInWithCredentials } from '@/lib/actions/user.actions';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 const CredentialsSignInForm = () => {
+    const router = useRouter();
+
     const [data, action] = useActionState(signInWithCredentials, {
         success: false,
         message: '',
@@ -18,6 +20,12 @@ const CredentialsSignInForm = () => {
 
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get('callbackUrl') || '/';
+
+    useEffect(() => {
+        if (data?.success) {
+            router.push(callbackUrl);
+        }
+    }, [data, callbackUrl, router]);
 
     const SignInButton = () => {
         const { pending } = useFormStatus();
