@@ -4,6 +4,7 @@ import { signIn, signOut } from '@/auth';
 import {signInFormSchema, signUpFormSchema} from '../validators';
 import {prisma} from "@/db/prisma";
 import { hashSync } from "bcrypt-ts-edge";
+import { formatError } from "@/lib/utils";
 
 export async function signInWithCredentials(
     prevState: unknown,
@@ -73,15 +74,14 @@ export async function signUpUser(prevState: unknown, formData: FormData) {
         return { success: true, message: 'User registered successfully' };
     } catch (error) {
         if (error instanceof Error) {
-            console.log(error);
 
             return {
                 success: false,
-                message: 'Something went wrong',
+                message: formatError(error),
                 error: error.message,
             };
         }
 
-        return { success: false, message: 'User was not registered' };
+        return { success: false, message: formatError(error) };
     }
 }
